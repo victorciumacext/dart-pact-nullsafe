@@ -8,8 +8,8 @@ void main() {
 
   group('Scope functions', () {
     test('should not map null inputs', () {
-        final String s = null;
-        final result = s.let((value) => throw Exception());
+        final String? s = null;
+        final dynamic result = s.let((value) => throw Exception());
         expect(result, isNull);
     });
 

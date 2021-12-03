@@ -25,16 +25,16 @@ Future<String> downloadFromGithub() async {
   return _finalPath;
 }
 
-void _unzip() async {
+Future<void> _unzip() async {
   print('Decompressing file $_downloadPath');
   var bytes = await File(_downloadPath).readAsBytes();
   var decoded = gzip.decode(bytes);
   var writeStream = File(_finalPath).openWrite();
-  await writeStream.add(decoded);
+  writeStream.add(decoded);
   await writeStream.close();
 }
 
-void _download() async {
+Future<void> _download() async {
   var file = File(_downloadPath);
   if (await file.exists()) {
     print('GZ file exists');

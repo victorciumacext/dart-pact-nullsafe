@@ -37,13 +37,13 @@ class PactRepository {
   }
 
   /// Gets a pact file in JSON format
-  String getPactFile(String consumer, String provider) {
+  String? getPactFile(String consumer, String provider) {
     return _pacts[_key(consumer, provider)].let((value) {
       return jsonEncode(value);
     });
   }
 
-  static String _key(String consumer, String provider) =>
+  static String _key(String? consumer, String? provider) =>
       '${consumer}|${provider}';
 
   static Pact _createHeader(PactBuilder builder) {
@@ -55,16 +55,16 @@ class PactRepository {
   static void _mergeInteractions(PactBuilder builder, Pact contract) {
     final interactions = builder.stateBuilders.expand(
         (st) => st.requests.map((req) => _toInteraction(req, st.state)));
-    contract.interactions.addAll(interactions);
+    contract.interactions!.addAll(interactions);
   }
 
   static Interaction _toInteraction(
-      RequestBuilder requestBuilder, String state) {
+      RequestBuilder requestBuilder, String? state) {
     return Interaction()
       ..description = requestBuilder.description
       ..providerStates = [ProviderState()..name = state]
       ..request = (_toRequest(requestBuilder))
-      ..response = (_toResponse(requestBuilder.response));
+      ..response = (_toResponse(requestBuilder.response!));
   }
 
   static Request _toRequest(RequestBuilder requestBuilder) {
@@ -79,7 +79,7 @@ class PactRepository {
   static Response _toResponse(ResponseBuilder response) {
     return Response()
       ..headers = response.headers
-      ..status = response.status.code
+      ..status = response.status?.code
       ..body = response.body;
   }
 
@@ -99,11 +99,11 @@ class RequestTester {
 
   RequestTester._(this._stateBuilder);
 
-  void test(MockServerFactory factory, RequestTestFunction testFunction) async {
+  Future<void> test(MockServerFactory factory, RequestTestFunction testFunction) async {
     final pactBuilder = PactBuilder()..stateBuilders.add(_stateBuilder);
     final pact = PactRepository._createHeader(pactBuilder);
     PactRepository._mergeInteractions(pactBuilder, pact);
-    final server = factory.createMockServer(pact.interactions[0]);
+    final server = factory.createMockServer(pact.interactions![0]);
     try {
       await testFunction(server);
       _stateBuilder._tested = true;
@@ -132,8 +132,8 @@ class RequestTester {
 /// . Generators
 /// . Encoders
 class PactBuilder {
-  String consumer;
-  String provider;
+  String? consumer;
+  String? provider;
   final List<StateBuilder> _states = [];
 
   PactBuilder();
@@ -158,14 +158,13 @@ class PactBuilder {
 enum Method { GET, POST, DELETE, PUT }
 
 class StateBuilder {
-  String state;
+  String? state;
   bool _tested = false;
 
   final List<RequestBuilder> requests = [];
 
   void _validate(bool requireTests) {
     assert(state != null);
-    assert(requests != null);
     assert(requests.isNotEmpty);
     if (requireTests && !_tested) {
       throw PactException('State "$state" not tested');
@@ -197,11 +196,11 @@ class RequestBuilder {
 
   String description = '';
   Method method = Method.GET;
-  ResponseBuilder _response;
+  ResponseBuilder? _response;
 
   Map<String, String> query = {};
 
-  ResponseBuilder get response => _response;
+  ResponseBuilder? get response => _response;
   Body body = Body.isNullOrAbsent();
 
   Map<String, String> headers = {};
@@ -213,14 +212,9 @@ class RequestBuilder {
   }
 
   void _validate() {
-    assert(_path != null);
     assert(_path != '');
-    assert(query != null);
-    assert(method != null);
     assert(_response != null);
-    assert(body != null);
-    assert(headers != null);
-    _response._validate();
+    _response?._validate();
   }
 
   RequestBuilder._();
@@ -229,12 +223,11 @@ class RequestBuilder {
 class ResponseBuilder {
   Map<String, String> headers = {};
 
-  Status status = Status(200);
+  Status? status = Status(200);
 
-  Body body = Body.empty();
+  Body? body = Body.empty();
 
   void _validate() {
-    assert(headers != null);
     assert(status != null);
     assert(body != null);
   }

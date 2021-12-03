@@ -27,7 +27,7 @@ class MockServerFactory {
   /// on the external library is not possible.
   ///
   /// If [port] is null, then is assigned by the operating system
-  MockServer createMockServer(Interaction interaction, {int port}) {
+  MockServer createMockServer(Interaction interaction, {int? port}) {
     final pact = Pact()
       ..consumer = (Consumer()..name = 'consumer-for-mock-server')
       ..provider = (Provider()..name = 'provider-for-mock-server')
@@ -49,8 +49,8 @@ class MockServerFactory {
 
     return _servers.update(
         port,
-        (existing) =>
-            throw PactException('Server with port $port already exists'),
+        ((existing) =>
+            throw PactException('Server with port $port already exists')),
         ifAbsent: createServer);
   }
 
@@ -67,7 +67,7 @@ class MockServerFactory {
   ///
   /// [libPath] can be used to provide a different path for the rust core
   /// library. **Using a different library version has unpredictable results**.
-  static Future<MockServerFactory> create({String libPath}) async {
+  static Future<MockServerFactory> create({String? libPath}) async {
     libPath ??= _default_lib_path;
     var file = File(libPath);
     if (!await file.exists()) {
@@ -127,7 +127,7 @@ extension MockServerExt on MockServer {
   Future<HttpClientResponse> invoke(
     String path, {
     String method = 'GET',
-    Object body,
+    Object? body,
     Map<String, String> headers = const {'accept': 'application/json'},
     int status = 200,
   }) async {

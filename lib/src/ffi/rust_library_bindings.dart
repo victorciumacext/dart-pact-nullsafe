@@ -40,7 +40,7 @@ extension _StringExt on String {
   }
 }
 
-extension _Utf8PointerExt on Pointer<Utf8> {
+extension _Utf8PointerExt on Pointer<Utf8>? {
   bool isNull() => this == null || this == nullptr;
 }
 
@@ -82,7 +82,7 @@ typedef _createMockServerDart = int Function(
 ///
 /// [Docs](https://docs.rs/pact_mock_server_ffi/0.0.17/pact_mock_server_ffi/fn.create_mock_server.html)
 int createMockServer(DynamicLibrary lib, String jsonPact,
-    {String host = '127.0.0.1', int/*?*/ port = 0, bool useTls = false}) {
+    {String host = '127.0.0.1', int? port = 0, bool useTls = false}) {
   port ??= 0;
   assert(port >= 0, 'Invalid port');
   final createMockServerFunc = lib.lookupFunction<_createMockServerNative, _createMockServerDart>('create_mock_server');
@@ -150,7 +150,7 @@ bool cleanup(DynamicLibrary lib, int port) {
   return _booleanBridge.fromNative(cleanupMockServerFunc(port));
 }
 
-void writePactFile(DynamicLibrary lib, int port, {String directory}) {
+void writePactFile(DynamicLibrary lib, int port, {String? directory}) {
   final dirNative = directory == null ? nullptr : directory.toNative();
   var func = lib.lookupFunction<Int32 Function(Int32 port, Pointer<Utf8> directory),
       int Function(int port, Pointer<Utf8> directory)>('write_pact_file');

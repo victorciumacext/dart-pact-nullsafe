@@ -9,10 +9,10 @@ part 'pact_contract_dto.g.dart';
 
 @JsonSerializable()
 class Pact {
-  Provider provider;
-  Consumer consumer;
-  List<Interaction> interactions = [];
-  Metadata metadata = Metadata();
+  Provider? provider;
+  Consumer? consumer;
+  List<Interaction>? interactions = [];
+  Metadata? metadata = Metadata();
 
   Pact();
 
@@ -26,10 +26,10 @@ class Pact {
 class Metadata {
   Metadata();
 
-  Map<String, String> pactSpecification = {'version': '3.0.0'};
+  Map<String, String>? pactSpecification = {'version': '3.0.0'};
 
   @JsonKey(name: 'pact-dart')
-  Map<String, String> pactDart = {'version': '0.1.0'};
+  Map<String, String>? pactDart = {'version': '0.1.0'};
 
   factory Metadata.fromJson(Map<String, dynamic> json) =>
       _$MetadataFromJson(json);
@@ -39,10 +39,10 @@ class Metadata {
 
 @JsonSerializable()
 class Interaction {
-  String description;
-  Request request;
-  Response response;
-  List<ProviderState> providerStates = [];
+  String? description;
+  Request? request;
+  Response? response;
+  List<ProviderState>? providerStates = [];
 
   Interaction();
 
@@ -54,8 +54,8 @@ class Interaction {
 
 @JsonSerializable()
 class ProviderState {
-  String name;
-  Map<String, dynamic> params = {};
+  String? name;
+  Map<String, dynamic>? params = {};
 
   ProviderState();
 
@@ -67,14 +67,14 @@ class ProviderState {
 
 @JsonSerializable()
 class Response {
-  int status;
+  int? status;
 
   Response();
 
-  Map<String, String> headers = {};
+  Map<String, String>? headers = {};
 
   @JsonKey(fromJson: Body.fromJsonToBody)
-  Body body;
+  Body? body;
 
   factory Response.fromJson(Map<String, dynamic> json) =>
       _$ResponseFromJson(json);
@@ -86,13 +86,13 @@ class Response {
 class Request {
   Request();
 
-  String method;
-  String path;
-  Map<String, String> query = {};
-  Map<String, String> headers = {};
+  String? method;
+  String? path;
+  Map<String, String>? query = {};
+  Map<String, String>? headers = {};
 
   @JsonKey(fromJson: Body.fromJsonToBody)
-  Body body;
+  Body? body;
 
   factory Request.fromJson(Map<String, dynamic> json) =>
       _$RequestFromJson(json);
@@ -102,7 +102,7 @@ class Request {
 
 @JsonSerializable()
 class Provider {
-  String name;
+  String? name;
 
   Provider();
 
@@ -114,7 +114,7 @@ class Provider {
 
 @JsonSerializable()
 class Consumer {
-  String name;
+  String? name;
 
   Consumer();
 
